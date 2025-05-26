@@ -1,0 +1,23 @@
+---
+import Navigation from "../components/Navigation.astro"
+import "../style/global.css"
+import { ClientRouter } from "astro:transitions"
+const {pageTitle} = Astro.props
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>楓之眾 {pageTitle}</title>
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<ClientRouter />
+</head>
+<body>
+	<Navigation></Navigation>
+
+    <main class="w-200 mx-auto">   
+        <slot/>
+    </main>
+</body>
+</html>

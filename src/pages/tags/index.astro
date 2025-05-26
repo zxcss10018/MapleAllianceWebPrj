@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+const allPosts = Object.values(import.meta.glob("../blog/posts/*.md",{eager:true}))
+const uniqueTags = [...new Set(allPosts.map((post:any) => post.frontmatter.tags).flat())]
+---
+<BaseLayout>
+    <h2 class="text-center text-xl font-blod my-5">所有標籤</h2>
+    <div class="flex flex-wrap gap-4 justify-center">
+        {
+            uniqueTags.map((tag:any) => <a href={`/tags/${tag}`} 
+            class="hover:bg-amber-600 hover:text-white duration-150 text-sm py-1 px-3 bg-amber-300 rounded-xl">{tag}</a>)
+        }
+    </div>
+</BaseLayout>
