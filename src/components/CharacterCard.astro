@@ -1,0 +1,59 @@
+---
+const {
+    CharacterName,
+    JobName,
+    UnionLevel,
+    CharacterLookCipherText,
+    UnionTotalLevel,
+    CharacterLookUrl
+} = Astro.props ;
+
+const avatarSize = 100 ;
+let avatarSrc;
+if (CharacterLookUrl && CharacterLookUrl !== "") {
+  // 比如 "https://tw-avatar-maplestory.beanfun.com/Character/OFMDPKI…PLCP.png"
+  avatarSrc = CharacterLookUrl;
+} 
+else {
+  avatarSrc = `https://tw-event.beanfun.com/MapleStory/Image/Character/Static?cipherText=${CharacterLookCipherText}&size=${avatarSize}`;
+}
+---
+
+<style>
+  /* 這一份 <style> 只會編譯到這個元件的範圍，不會影響其他地方 */
+.character-card {
+  width: 170px;
+  border: 1px solid #0a0a0a;
+  border-radius: 6px;
+  padding: 8px;
+  background-color: #7a65ff6e;
+  box-sizing: border-box;
+  text-align: center; /* 文字一起置中 */
+}
+.character-card img {
+  display: block;     /* 讓 margin: 0 auto 生效 */
+  margin: 0 auto;     /* 水平置中 */
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 2px solid #888;
+  background-color: #f4f3f568;
+  border-radius: 8px;
+}
+.character-card p {
+  margin: 4px 0;
+  font-size: 0.85rem;
+}
+</style>
+
+<article class="character-card" style="display: inline-block; margin: 12px; text-align: center;">
+  <!-- 預覽時若網頁被擋，建議先檢查下面這行組出來的 URL 是否能在瀏覽器打開 -->
+  <img src={avatarSrc} alt={CharacterName} width={avatarSize} height={avatarSize}
+       style="border: 2px solid #666; border-radius: 8px; object-fit: cover;" />
+  <div style="margin-top: 8px; font-size: 0.9rem; line-height: 1.2;">
+    <p>名稱：<strong>{CharacterName}</strong></p>
+    <p>職業：{JobName}</p>
+    <p>等級：{UnionLevel}</p>
+    <p>戰地分數：{UnionTotalLevel}</p>
+  </div>
+</article>

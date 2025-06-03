@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro"
 import { slide } from "astro:transitions";
+import CharacterCard from "../components/CharacterCard.astro";
+import members from "../data/guild_union_rank.json"
 ---
 <BaseLayout pageTitle="關於楓之眾">
     <div class="grid grid-cols-2 gap-4 items-center mt-12">
@@ -22,4 +24,16 @@ import { slide } from "astro:transitions";
         </div>
     </div>
     <h1 class="text-5xl font-bold text-center mt-15 my-5">公會成員</h1>
+    <div class="cards-container">
+        {members.map(members => (
+            <CharacterCard
+            CharacterName={members.CharacterName}
+            JobName={members.JobName}
+            UnionLevel={members.UnionLevel}
+            UnionTotalLevel={members.UnionTotalLevel}
+            CharacterLookCipherText={members.CharacterLookCipherText}
+            CharacterLookUrl={members.CharacterLookUrl}
+            />
+        ))}
+    </div>
 </BaseLayout>
