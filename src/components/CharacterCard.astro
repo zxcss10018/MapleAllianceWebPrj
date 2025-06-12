@@ -5,14 +5,14 @@ const {
     UnionLevel,
     CharacterLookCipherText,
     UnionTotalLevel,
-    CharacterLookUrl
+    ImageUrl
 } = Astro.props ;
 
 const avatarSize = 100 ;
 let avatarSrc;
-if (CharacterLookUrl && CharacterLookUrl !== "") {
+if (ImageUrl && ImageUrl !== "") {
   // 比如 "https://tw-avatar-maplestory.beanfun.com/Character/OFMDPKI…PLCP.png"
-  avatarSrc = CharacterLookUrl;
+  avatarSrc = ImageUrl;
 } 
 else {
   avatarSrc = `https://tw-event.beanfun.com/MapleStory/Image/Character/Static?cipherText=${CharacterLookCipherText}&size=${avatarSize}`;
