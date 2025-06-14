@@ -2,7 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro"
 import { slide } from "astro:transitions";
 import CharacterCard from "../components/CharacterCard.astro";
-import members from "../data/guild_union_rank.json"
+const res = await fetch('https://dash.cloudflare.com/e3471837b4c40ed2bc211028c1896020/r2/default/buckets/guild-data/objects/guild_union_rank.json/details');
+const members = await res.json();
 ---
 <BaseLayout pageTitle="關於楓之眾">
     <div class="grid grid-cols-2 gap-4 px-4 items-center mt-12 ">
@@ -26,13 +27,13 @@ import members from "../data/guild_union_rank.json"
     <h1 class="text-5xl font-bold text-center mt-15 my-5">公會成員</h1>
     <div class="border border-slate-300 rounded-xl ">
         <div class="cards-container w-full flex flex-wrap justify-center ">
-            {members.map(members => (
+            {members.map((member: { CharacterName: unknown; JobName: unknown; UnionLevel: unknown; UnionTotalLevel: unknown; ImageUrl: unknown; }) => (
                 <CharacterCard
-                CharacterName={members.CharacterName}
-                JobName={members.JobName}
-                UnionLevel={members.UnionLevel}
-                UnionTotalLevel={members.UnionTotalLevel}
-                ImageUrl={members.ImageUrl}
+                CharacterName={member.CharacterName}
+                JobName={member.JobName}
+                UnionLevel={member.UnionLevel}
+                UnionTotalLevel={member.UnionTotalLevel}
+                ImageUrl={member.ImageUrl}
                 />
             ))}
         </div>
