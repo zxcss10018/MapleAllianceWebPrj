@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro"
 import { slide } from "astro:transitions";
 import CharacterCard from "../components/CharacterCard.astro";
-const res = await fetch('https://dash.cloudflare.com/e3471837b4c40ed2bc211028c1896020/r2/default/buckets/guild-data/objects/guild_union_rank.json/details');
+const res = await fetch('https://pub-9702948a18e74233bf480db13d0aff8f.r2.dev/guild_union_rank.json');
 const members = await res.json();
 ---
 <BaseLayout pageTitle="關於楓之眾">
