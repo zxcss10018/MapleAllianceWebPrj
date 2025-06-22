@@ -1,0 +1,288 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro"
+
+// 六邊形盤面，每排一個陣列，每個元素代表一顆六邊形
+// type: 顏色類型, input: 是否顯示 input, offset: 此排左側偏移(px)
+// 紫色+紅色區域
+const rowsTop = [
+  { offset: 0, hexes: [
+      { type: 'violet', coreType: 'skill', input: false, icon: '🔒'},
+      { type: 'violet', coreType: 'skill', input: false, icon: '🔒' },
+      { type: 'pink', coreType: 'mastery', input: false, icon: '🔒' , offset: 322 }
+    ]
+  },
+  { offset: 0, hexes: [
+      { type: 'violet', coreType: 'skill', input: false, icon: '🔒' },
+      { type: 'violet', coreType: 'skill', input: false, icon: '🔒' },
+      { type: 'pink', coreType: 'mastery', input: true, offset: 134 },
+      { type: 'pink', coreType: 'mastery', input: false, icon: '🔒' }
+    ]
+  },
+  { offset: -94, hexes: [
+      { type: 'violet', coreType: 'skill', input: false, icon: '🔒' },
+      { type: 'violet', coreType: 'skill', input: true },  // <--- 有 input
+      { type: 'pink', coreType: 'mastery', input: true, offset: 40}
+    ]
+  },
+]
+  // 藍色+灰色區域
+const rowsBottom = [
+  { offset: 0, hexes: [
+      { type: 'cyan', coreType: 'enhance', input: true },
+      { type: 'slate', coreType: 'universal', input: true, offset: 40 }
+    ]
+  },
+  { offset: 0, hexes: [
+      { type: 'cyan', coreType: 'enhance', input: true },
+      { type: 'cyan', coreType: 'enhance', input: true },
+      { type: 'slate', coreType: 'universal', input: false, icon: '🔒' , offset: 133 },
+      { type: 'slate', coreType: 'universal', input: false, icon: '🔒' }
+    ]
+  },
+  { offset: 0, hexes: [
+      { type: 'cyan', coreType: 'enhance', input: true },
+      { type: 'slate', coreType: 'universal', input: false, icon: '🔒' , offset: 415 }
+    ]
+  }
+]
+
+const colorMap = {
+  violet: "bg-violet-600",
+  pink: "bg-pink-600",
+  cyan: "bg-cyan-400",
+  slate: "bg-slate-400"
+}
+---
+
+<BaseLayout>
+  <h1 class="text-center text-6xl font-bold py-10">六轉碎片進度計算機</h1>
+  <div class="flex flex-col items-center">
+    {/* 上半 */}
+    {rowsTop.map((row, rIdx) => (
+      <div style={`display:flex; justify-content:center;
+        ${row.offset ? `margin-left:${row.offset}px;` : ''}
+        ${rIdx>0 ? 'margin-top:-26px;' : ''}`}>
+        {row.hexes.map((hex, hIdx) => (
+          <div class={`hexagon ${colorMap[hex.type]}`} style={hex.offset ? `margin-left:${hex.offset}px;` : ""}>
+            {hex.input &&
+              <input type="number" min="0" max="30" value="0" oninput="this.value = Math.max(0, Math.min(30, this.value.replace(/[^0-9]/g, '')))" class="hex-input" data-core-type={hex.coreType} style="width:60px; text-align:center; margin-top:23px;margin-left: 22px;font-size: var(--text-4xl);"/>
+            }
+            {hex.icon && <span style="font-size:35px; position:absolute; top:22px; left:21px;">{hex.icon}</span>}
+          </div>
+        ))}
+      </div>
+    ))}
+
+    {/* 中間空隙 */}
+    <div class="h-25"></div>  {/* h-16 = 64px, 你可以用 h-20 之類 */}
+
+    {/* 下半 */}
+    {rowsBottom.map((row, rIdx) => (
+      <div style={`display:flex; justify-content:center;
+        ${row.offset ? `margin-left:${row.offset}px;` : ''}
+        ${rIdx>0 ? 'margin-top:-26px;' : ''}`}>
+        {row.hexes.map((hex, hIdx) => (
+          <div class={`hexagon ${colorMap[hex.type]}`} style={hex.offset ? `margin-left:${hex.offset}px;` : ""}>
+            {hex.input &&
+              <input type="number" min="0" max="30" value="0" oninput="this.value = Math.max(0, Math.min(30, this.value.replace(/[^0-9]/g, '')))" class="hex-input" data-core-type={hex.coreType} style="width:60px; text-align:center; margin-top:23px;margin-left: 22px;font-size: var(--text-4xl);"/>
+            }
+            {hex.icon && <span style="font-size:35px; position:absolute; top:22px; left:21px;">{hex.icon}</span>}
+          </div>
+        ))}
+      </div>
+    ))}
+
+  <div id="progressResult" class="text-xl font-bold text-center mb-1"></div>  
+  <div class="w-full flex justify-center items-center my-8">
+    <div id="progressBar3D" class="relative w-[600px] h-10 flex items-center rounded-full shadow-xl overflow-hidden progress-bar-3d bg-idle">
+      <div id="progressFill" class="absolute left-0 top-0 h-full rounded-full shadow-inner"></div>
+      <span id="progressPercent" class="relative z-10 w-full text-center text-white font-bold text-lg drop-shadow">0%</span>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.hexagon {
+  width: 90px;
+  height: 100px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  margin:2px;
+  display: block;
+  position: relative;
+}
+.progress-bar-3d {
+  box-shadow: 0 3px 15px 0 rgba(80, 80, 80, 0.16), 0 1px 2px rgba(0,0,0,0.08);
+  border: 1px solid #333;
+  background: linear-gradient(180deg, #222 80%, #222 100%);
+  position: relative;
+}
+#progressFill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #babf18 30%, #eaff54 100%);
+  filter: blur(0.8px) brightness(1.08);
+  box-shadow: 0 0 18px 3px rgba(224, 255, 84, 0.23);
+  transition: width 0.7s cubic-bezier(.77,0,.18,1), background 0.4s;
+}
+.progress-bar-3d.bg-idle #progressFill {
+  background: linear-gradient(90deg, #222 60%, #444 100%);
+  filter: blur(0.5px);
+  box-shadow: 0 0 6px 1px #000;
+}
+#progressPercent {
+  color: #fff;
+  font-weight: 900;
+  font-size: 2.2rem;
+  -webkit-text-stroke: 2px #222;
+  text-shadow: none;
+  letter-spacing: 2px;
+  font-family: 'Arial Black', '微軟正黑體', 'Microsoft JhengHei', Arial, sans-serif;
+}
+</style>
+
+<script is:inline>
+  // 技能核心升級表（30等）
+  const skillCoreTable = [
+    { erda: 0, shard: 0 },{ erda: 1, shard: 30 },{ erda: 1, shard: 35 },{ erda: 1, shard: 40 },{ erda: 2, shard: 45 },{ erda: 2, shard: 50 },
+    { erda: 2, shard: 55 },{ erda: 3, shard: 60 },{ erda: 3, shard: 65 },{ erda: 10, shard: 200 },{ erda: 3, shard: 80 },{ erda: 3, shard: 90 },
+    { erda: 4, shard: 100 },{ erda: 4, shard: 110 },{ erda: 4, shard: 120 },{ erda: 4, shard: 130 },{ erda: 4, shard: 140 },{ erda: 4, shard: 150 },
+    { erda: 5, shard: 160 },{ erda: 15, shard: 350 },{ erda: 5, shard: 170 },{ erda: 5, shard: 180 },{ erda: 5, shard: 190 },{ erda: 5, shard: 200 },
+    { erda: 5, shard: 210 },{ erda: 6, shard: 220 },{ erda: 6, shard: 230 },{ erda: 6, shard: 240 },{ erda: 7, shard: 250 },{ erda: 20, shard: 500 }
+  ];
+  // 精通核心升級表（30等）
+  const masteryCoreTable = [
+    { erda: 3, shard: 50 },{ erda: 1, shard: 15 },{ erda: 1, shard: 18 },{ erda: 1, shard: 20 },{ erda: 1, shard: 23 },{ erda: 1, shard: 25 },
+    { erda: 1, shard: 28 },{ erda: 2, shard: 30 },{ erda: 2, shard: 33 },{ erda: 5, shard: 100 },{ erda: 2, shard: 40 },{ erda: 2, shard: 45 },
+    { erda: 2, shard: 50 },{ erda: 2, shard: 55 },{ erda: 2, shard: 60 },{ erda: 2, shard: 65 },{ erda: 2, shard: 70 },{ erda: 2, shard: 75 },
+    { erda: 3, shard: 80 },{ erda: 8, shard: 175 },{ erda: 3, shard: 85 },{ erda: 3, shard: 90 },{ erda: 3, shard: 95 },{ erda: 3, shard: 100 },
+    { erda: 3, shard: 105 },{ erda: 3, shard: 110 },{ erda: 3, shard: 115 },{ erda: 3, shard: 120 },{ erda: 4, shard: 125 },{ erda: 10, shard: 250 }
+  ];
+  // 強化核心升級表（30等）
+  const enhanceCoreTable = [
+    { erda: 4, shard: 75 },{ erda: 1, shard: 23 },{ erda: 1, shard: 27 },{ erda: 1, shard: 30 },{ erda: 2, shard: 34 },{ erda: 2, shard: 38 },
+    { erda: 2, shard: 42 },{ erda: 3, shard: 45 },{ erda: 3, shard: 49 },{ erda: 8, shard: 150 },{ erda: 3, shard: 60 },{ erda: 3, shard: 68 },
+    { erda: 3, shard: 75 },{ erda: 3, shard: 83 },{ erda: 3, shard: 90 },{ erda: 3, shard: 98 },{ erda: 3, shard: 105 },{ erda: 3, shard: 113 },
+    { erda: 4, shard: 120 },{ erda: 12, shard: 263 },{ erda: 4, shard: 128 },{ erda: 4, shard: 135 },{ erda: 4, shard: 143 },{ erda: 4, shard: 150 },
+    { erda: 4, shard: 158 },{ erda: 5, shard: 165 },{ erda: 5, shard: 173 },{ erda: 5, shard: 180 },{ erda: 6, shard: 188 },{ erda: 15, shard: 375 }
+  ];
+  // 共用核心升級表（30等）
+  const universalCoreTable = [
+    { erda: 7, shard: 125 },{ erda: 2, shard: 38 },{ erda: 2, shard: 44 },{ erda: 2, shard: 50 },{ erda: 3, shard: 57 },{ erda: 3, shard: 63 },
+    { erda: 3, shard: 69 },{ erda: 5, shard: 75 },{ erda: 5, shard: 82 },{ erda: 14, shard: 300 },{ erda: 5, shard: 110 },{ erda: 5, shard: 124 },
+    { erda: 6, shard: 138 },{ erda: 6, shard: 152 },{ erda: 6, shard: 165 },{ erda: 6, shard: 179 },{ erda: 6, shard: 193 },{ erda: 6, shard: 207 },
+    { erda: 7, shard: 220 },{ erda: 17, shard: 525 },{ erda: 7, shard: 234 },{ erda: 7, shard: 248 },{ erda: 7, shard: 262 },{ erda: 7, shard: 275 },
+    { erda: 7, shard: 289 },{ erda: 9, shard: 303 },{ erda: 9, shard: 317 },{ erda: 9, shard: 330 },{ erda: 10, shard: 344 },{ erda: 20, shard: 750 }
+  ];
+
+  function animateProgressBar(target) {
+    const fill = document.getElementById('progressFill');
+    const percent = document.getElementById('progressPercent');
+    const bar = document.getElementById('progressBar3D');
+    let v = Math.max(0, Math.min(100, target));
+
+    // 動畫更新數字
+    let now = parseFloat(percent.textContent) || 0;
+    let diff = v - now;
+    let step = diff / 18; // 0.7秒內約25步
+    let i = 0;
+    function update() {
+      if (i < 18) {
+        now += step;
+        percent.textContent = `${now.toFixed(1)}%`;
+        fill.style.width = now + "%";
+        i++;
+        requestAnimationFrame(update);
+      } else {
+        percent.textContent = `${v.toFixed(1)}%`;
+        fill.style.width = v + "%";
+      }
+    }
+    update();
+
+    // 根據進度改變顏色
+    if (v < 1) {
+      bar.classList.add('bg-idle');
+    } else {
+      bar.classList.remove('bg-idle');
+    }
+  }
+
+  function calculateProgress() {
+    // 1. 技能核心
+    let skillInputs = [...document.querySelectorAll('.hex-input[data-core-type="skill"]')];
+    let skillErda = 0, skillShard = 0;
+    skillInputs.forEach(inp => {
+      let lv = parseInt(inp.value, 10) || 0;
+      for (let i = 1; i < lv; i++) {
+        skillErda += skillCoreTable[i].erda;
+        skillShard += skillCoreTable[i].shard;
+      }
+    });
+    let skillErdaMax = skillInputs.length * skillCoreTable.reduce((s, lvl) => s + lvl.erda, 0);
+    let skillShardMax = skillInputs.length * skillCoreTable.reduce((s, lvl) => s + lvl.shard, 0);
+
+    // 2. 精通核心
+    let masteryInputs = [...document.querySelectorAll('.hex-input[data-core-type="mastery"]')];
+    let masteryErda = 0, masteryShard = 0;
+    masteryInputs.forEach(inp => {
+      let lv = parseInt(inp.value, 10) || 0;
+      for (let i = 0; i < lv; i++) {
+        masteryErda += masteryCoreTable[i].erda;
+        masteryShard += masteryCoreTable[i].shard;
+      }
+    });
+    let masteryErdaMax = masteryInputs.length * masteryCoreTable.reduce((s, lvl) => s + lvl.erda, 0);
+    let masteryShardMax = masteryInputs.length * masteryCoreTable.reduce((s, lvl) => s + lvl.shard, 0);
+
+    // 3. 強化核心
+    let enhanceInputs = [...document.querySelectorAll('.hex-input[data-core-type="enhance"]')];
+    let enhanceErda = 0, enhanceShard = 0;
+    enhanceInputs.forEach(inp => {
+      let lv = parseInt(inp.value, 10) || 0;
+      for (let i = 0; i < lv; i++) {
+        enhanceErda += enhanceCoreTable[i].erda;
+        enhanceShard += enhanceCoreTable[i].shard;
+      }
+    });
+    let enhanceErdaMax = enhanceInputs.length * enhanceCoreTable.reduce((s, lvl) => s + lvl.erda, 0);
+    let enhanceShardMax = enhanceInputs.length * enhanceCoreTable.reduce((s, lvl) => s + lvl.shard, 0);
+
+    // 4. 共用核心
+    let universalInputs = [...document.querySelectorAll('.hex-input[data-core-type="universal"]')];
+    let universalErda = 0, universalShard = 0;
+    universalInputs.forEach(inp => {
+      let lv = parseInt(inp.value, 10) || 0;
+      for (let i = 0; i < lv; i++) {
+        universalErda += universalCoreTable[i].erda;
+        universalShard += universalCoreTable[i].shard;
+      }
+    });
+    let universalErdaMax = universalInputs.length * universalCoreTable.reduce((s, lvl) => s + lvl.erda, 0);
+    let universalShardMax = universalInputs.length * universalCoreTable.reduce((s, lvl) => s + lvl.shard, 0);
+
+    // 5. 全部合併（加總所有已用/總需求）
+    let allErdaUsed  = skillErda + masteryErda + enhanceErda + universalErda;
+    let allErdaMax   = skillErdaMax + masteryErdaMax + enhanceErdaMax + universalErdaMax;
+    let allShardUsed = skillShard + masteryShard + enhanceShard + universalShard;
+    let allShardMax  = skillShardMax + masteryShardMax + enhanceShardMax + universalShardMax;
+
+    // 6. 計算百分比（可用平均，也可用 Math.min 取最低進度都行）
+    let percent = allErdaMax > 0 && allShardMax > 0
+      ? (((allErdaUsed / allErdaMax) + (allShardUsed / allShardMax)) / 2 * 100).toFixed(1)
+      : 0;
+
+    // 7. 顯示數字到畫面
+    document.getElementById('progressResult').innerHTML =
+      `靈魂艾爾達：${allErdaUsed} / ${allErdaMax}<br>` +
+      `靈魂艾爾達碎片：${allShardUsed} / ${allShardMax}`;
+
+    animateProgressBar(Number(percent));
+  }
+
+  // **只要呼叫一次事件綁定即可**
+  document.querySelectorAll('.hex-input').forEach(inp => {
+    inp.addEventListener('input', calculateProgress);
+  });
+</script>
+
+

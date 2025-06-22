@@ -1,11 +1,18 @@
 <nav class="bg-indigo-500 py-6 text-2xl text-stone-100 w-full">
 	<div class="flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center w-full">
-		<a href="/"><strong>首頁</strong></a>
-		<a href="/blog"><strong>所有文章</strong></a>
-		<a href="/about"><strong>關於楓之眾</strong></a>
-		<a href=""><strong>蘑菇的悄悄話</strong></a>
-		<a href=""><strong>實用工具</strong></a>
-		<a href="/contact"><strong>相關連結</strong></a>
+		<a href="/" class="hover:text-amber-400"><strong>首頁</strong></a>
+		<a href="/blog" class="hover:text-amber-400"><strong>所有文章</strong></a>
+		<a href="/about" class="hover:text-amber-400"><strong>關於楓之眾</strong></a>
+		<a href="" class="hover:text-amber-400"><strong>蘑菇的悄悄話</strong></a>
+		<div class="relative group">
+			<a href="#" class="hover:text-amber-400"><strong>實用工具</strong></a>
+			<div class="absolute left-1/2 -translate-x-1/2 mt-2 w-55 rounded shadow-lg bg-indigo-500 bg-opacity-100 opacity-0 group-hover:opacity-300 transition duration-500 z-50">
+      			<ul class="flex flex-col py-2">
+        			<li><a href="/tool/maplehexa" class="block py-1 text-center hover:text-amber-400"><strong>六轉碎片進度計算機</strong></a></li>
+      			</ul>
+    		</div>
+  		</div>
+		<a href="/contact" class="hover:text-amber-400"><strong>相關連結</strong></a>
 	</div>
 </nav>
 
