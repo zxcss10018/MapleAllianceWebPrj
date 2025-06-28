@@ -27,7 +27,7 @@ const members = await res.json();
     <h1 class="text-5xl font-bold text-center mt-15 my-5 ">公會成員</h1>
     <div class="border border-slate-300 rounded-xl ">
         <div class="cards-container w-full flex flex-wrap justify-center shadow-xl/30 bg-violet-100 rounded-xl">
-            {members.map((member: { CharacterName: unknown; JobName: unknown; UnionLevel: unknown; UnionTotalLevel: unknown; ImageUrl: unknown; }) => (
+            {members.map((member) => (
                 <CharacterCard
                 CharacterName={member.CharacterName}
                 JobName={member.JobName}
